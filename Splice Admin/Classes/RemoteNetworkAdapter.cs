@@ -69,7 +69,8 @@ namespace Splice_Admin.Classes
 
             var op = new ConnectionOptions();
             var sc = new ManagementScope($@"\\{ComputerName}\root\CIMV2", op);
-            var query = new ObjectQuery("SELECT * FROM Win32_NetworkAdapter WHERE Manufacturer != NULL AND Manufacturer != 'Microsoft'");
+            // Changed below to include only physical adapters inclusing hyperv
+            var query = new ObjectQuery("SELECT * FROM Win32_NetworkAdapter WHERE Manufacturer != NULL AND PhysicalAdapter != 'False'");
             var searcher = new ManagementObjectSearcher(sc, query);
 
             try
@@ -123,13 +124,14 @@ namespace Splice_Admin.Classes
                             networkAdapter.DhcpLeaseExpires = ManagementDateTimeConverter.ToDateTime(m["DHCPLeaseExpires"].ToString());
                     }
 
+                    // Disabled below due to exception and not continuing 
                     // If DNS search order is the same as the DNS domain, clear the DNS search order.
-                    if (networkAdapter.DnsSuffixSearchOrder.Length == 1 &&
-                        (networkAdapter.DnsSuffixSearchOrder[0].Equals(networkAdapter.DnsDomain) ||
-                        string.IsNullOrEmpty(networkAdapter.DnsDomain)))
-                    {
-                        networkAdapter.DnsSuffixSearchOrder[0] = string.Empty;
-                    }
+                    //if (networkAdapter.DnsSuffixSearchOrder.Length == 1 &&
+                    //    (networkAdapter.DnsSuffixSearchOrder[0].Equals(networkAdapter.DnsDomain) ||
+                    //    string.IsNullOrEmpty(networkAdapter.DnsDomain)))
+                    //{
+                    //    networkAdapter.DnsSuffixSearchOrder[0] = string.Empty;
+                    //}
                 }
             }
             catch
