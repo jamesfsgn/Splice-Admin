@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Security.Permissions;
+using System.Security;
+using System.Runtime.ConstrainedExecution;
 
 namespace Splice_Admin.Classes
 {
@@ -43,7 +46,8 @@ namespace Splice_Admin.Classes
         // this will hold the security context 
         // for reverting back to the client after
         // impersonation operations are complete
-        private WindowsImpersonationContext impersonationContext;
+        //private WindowsImpersonationContext impersonationContext;
+        private WindowsIdentity impersonationContext;
         #endregion Declarations
 
 
@@ -66,11 +70,13 @@ namespace Splice_Admin.Classes
         }
         public void Impersonate()
         {
-            impersonationContext = Logon().Impersonate();
+            //impersonationContext = Logon().Impersonate();
+            impersonationContext = Logon();
         }
         public void Undo()
         {
-            impersonationContext.Undo();
+            //impersonationContext.Undo();
+            impersonationContext.Dispose();
         }
         #endregion Public Methods
 
